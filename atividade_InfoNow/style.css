@@ -1,0 +1,123 @@
+/* styles.css */
+/* (Use exatamente o seu styles.css existente — não há mudanças aqui) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+  --primary-color: #0066ff;
+  --secondary-color: #f4f6f8;
+  --accent-color: #00b894;
+  --bg-color: #ffffff;
+  --text-color: #1e1e1e;
+  --card-bg: #ffffff;
+  --border-radius: 12px;
+  --font-family: 'Inter', sans-serif;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --hover-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  line-height: 1.7;
+  font-size: 17px;
+  padding: 0 20px;
+}
+
+.header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 50px 20px;
+  text-align: center;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.header h1 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.container {
+  max-width: 1300px;
+  margin: 30px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+}
+
+button {
+  padding: 10px 16px;
+  margin: 4px;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: var(--primary-color);
+  color: #fff;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1rem;
+}
+
+button:hover {
+  background-color: var(--accent-color);
+}
+
+.card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 30px 24px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card:hover {
+  box-shadow: var(--hover-shadow);
+  transform: translateY(-6px);
+}
+
+.card img {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 18px;
+}
+
+.card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 14px;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.card p, .card h3 {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 12px;
+}
+
+.badge {
+  display: inline-block;
+  background-color: var(--accent-color);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-top: auto;
+}
+
+.footer {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #888;
+  padding: 50px 0 30px;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 60px;
+}

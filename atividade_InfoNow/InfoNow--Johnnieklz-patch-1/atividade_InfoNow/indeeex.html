@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>infornow! - Painel de Informações</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .refresh-btn {
+            transition: transform 0.5s ease;
+        }
+        
+        .refresh-btn:hover {
+            transform: rotate(180deg);
+        }
+        
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-indigo-600 mb-2">
+                <span class="text-indigo-400">infor</span><span class="text-indigo-700">now!</span>
+            </h1>
+            <p class="text-gray-600">Seu painel dinâmico de informações atualizadas</p>
+        </header>
+        
+        <!-- Dashboard Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Weather Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-400 to-blue-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-cloud-sun mr-2"></i> Clima Atual
+                        </h2>
+                        <button id="refresh-weather" class="refresh-btn text-white hover:text-blue-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">São Paulo, Brasil</p>
+                </div>
+                <div class="p-4">
+                    <div id="weather-content" class="loading h-40">
+                        <!-- Weather data will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Movies Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-400 to-purple-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-film mr-2"></i> Filmes Populares
+                        </h2>
+                        <button id="refresh-movies" class="refresh-btn text-white hover:text-purple-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Top filmes esta semana</p>
+                </div>
+                <div class="p-4">
+                    <div id="movies-content" class="loading h-40">
+                        <!-- Movies data will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Jokes Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-amber-400 to-amber-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-laugh-squint mr-2"></i> Piada do Dia
+                        </h2>
+                        <button id="refresh-joke" class="refresh-btn text-white hover:text-amber-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Para alegrar seu dia</p>
+                </div>
+                <div class="p-4">
+                    <div id="joke-content" class="loading h-40">
+                        <!-- Joke data will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Country Info Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-400 to-emerald-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-globe-americas mr-2"></i> Informações do País
+                        </h2>
+                        <button id="refresh-country" class="refresh-btn text-white hover:text-emerald-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Dados sobre um país aleatório</p>
+                </div>
+                <div class="p-4">
+                    <div id="country-content" class="loading h-40">
+                        <!-- Country data will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- News Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden md:col-span-2 lg:col-span-1">
+                <div class="bg-gradient-to-r from-rose-400 to-rose-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-newspaper mr-2"></i> Notícias Recentes
+                        </h2>
+                        <button id="refresh-news" class="refresh-btn text-white hover:text-rose-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Principais manchetes</p>
+                </div>
+                <div class="p-4">
+                    <div id="news-content" class="loading h-40">
+                        <!-- News data will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fun Fact Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-fuchsia-400 to-fuchsia-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-lightbulb mr-2"></i> Curiosidade
+                        </h2>
+                        <button id="refresh-fact" class="refresh-btn text-white hover:text-fuchsia-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Você sabia?</p>
+                </div>
+                <div class="p-4">
+                    <div id="fact-content" class="loading h-40">
+                        <!-- Fun fact data will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-gray-500 text-sm">
+            <p>© 2023 infornow! - Todos os direitos reservados</p>
+            <p class="mt-1">Dados fornecidos por APIs públicas</p>
+        </footer>
+    </div>
+
+    <script>
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load all data initially
+            fetchWeather();
+            fetchMovies();
+            fetchJoke();
+            fetchCountry();
+            fetchNews();
+            fetchFact();
+            
+            // Set up refresh buttons
+            document.getElementById('refresh-weather').addEventListener('click', fetchWeather);
+            document.getElementById('refresh-movies').addEventListener('click', fetchMovies);
+            document.getElementById('refresh-joke').addEventListener('click', fetchJoke);
+            document.getElementById('refresh-country').addEventListener('click', fetchCountry);
+            document.getElementById('refresh-news').addEventListener('click', fetchNews);
+            document.getElementById('refresh-fact').addEventListener('click', fetchFact);
+        });
+        
+        // Fetch weather data
+        function fetchWeather() {
+            const content = document.getElementById('weather-content');
+            content.innerHTML = '<div class="loading h-40"></div>';
+            
+            // Using Open-Meteo API for weather (no API key needed)
+            fetch('https://api.open-meteo.com/v1/forecast?latitude=-23.55&longitude=-46.64&current_weather=true')
+                .then(response => response.json())
+                .then(data => {
+                    const weather = data.current_weather;
+                    const temp = weather.temperature;
+                    const weatherCode = weather.weathercode;
+                    
+                    // Get weather description based on WMO codes
+                    let weatherDesc, weatherIcon;
+                    if (weatherCode === 0) {
+                        weatherDesc = "Céu limpo";
+                        weatherIcon = "fa-sun";
+                    } else if (weatherCode <= 3) {
+                        weatherDesc = "Parcialmente nublado";
+                        weatherIcon = "fa-cloud-sun";
+                    } else if (weatherCode <= 48) {
+                        weatherDesc = "Neblina";
+                        weatherIcon = "fa-smog";
+                    } else if (weatherCode <= 67 || weatherCode >= 80) {
+                        weatherDesc = "Chuva";
+                        weatherIcon = "fa-cloud-rain";
+                    } else if (weatherCode <= 77) {
+                        weatherDesc = "Neve";
+                        weatherIcon = "fa-snowflake";
+                    } else {
+                        weatherDesc = "Trovoada";
+                        weatherIcon = "fa-bolt";
+                    }
+                    
+                    content.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <div class="text-5xl font-bold text-gray-800">${temp}°C</div>
+                            <div class="text-4xl text-blue-500">
+                                <i class="fas ${weatherIcon}"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-gray-700">${weatherDesc}</p>
+                            <p class="text-sm text-gray-500 mt-2">
+                                <i class="fas fa-wind mr-1"></i> Vento: ${weather.windspeed} km/h
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                <i class="fas fa-compass mr-1"></i> Direção: ${weather.winddirection}°
+                            </p>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="text-center text-gray-500 py-8">
+                            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                            <p>Não foi possível carregar os dados do clima.</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch popular movies
+        function fetchMovies() {
+            const content = document.getElementById('movies-content');
+            content.innerHTML = '<div class="loading h-40"></div>';
+            
+            // Using TMDb API (public endpoint for popular movies)
+            fetch('https://api.themoviedb.org/3/movie/popular?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb')
+                .then(response => response.json())
+                .then(data => {
+                    const movies = data.results.slice(0, 3);
+                    
+                    let moviesHTML = '<div class="space-y-4">';
+                    movies.forEach(movie => {
+                        moviesHTML += `
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-gray-200 rounded-md overflow-hidden flex-shrink-0">
+                                    ${movie.poster_path ? 
+                                        `<img src="https://image.tmdb.org/t/p/w92${movie.poster_path}" alt="${movie.title}" class="w-full h-full object-cover">` : 
+                                        `<div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500"><i class="fas fa-film"></i></div>`
+                                    }
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="font-medium text-gray-800">${movie.title}</h3>
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <span class="text-amber-500 mr-1"><i class="fas fa-star"></i></span>
+                                        ${movie.vote_average.toFixed(1)}/10
+                                        <span class="mx-2">•</span>
+                                        ${movie.release_date.split('-')[0]}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    moviesHTML += '</div>';
+                    
+                    content.innerHTML = moviesHTML;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="text-center text-gray-500 py-8">
+                            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                            <p>Não foi possível carregar os filmes.</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch a random joke
+        function fetchJoke() {
+            const content = document.getElementById('joke-content');
+            content.innerHTML = '<div class="loading h-40"></div>';
+            
+            // Using JokeAPI (no API key needed)
+            fetch('https://v2.jokeapi.dev/joke/Any?lang=pt&type=single')
+                .then(response => response.json())
+                .then(data => {
+                    content.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-center">
+                            <div class="text-4xl text-amber-500 mb-4">
+                                <i class="fas fa-laugh-beam"></i>
+                            </div>
+                            <p class="text-gray-700">${data.joke}</p>
+                            <p class="mt-4 text-sm text-gray-500">
+                                Categoria: ${data.category}
+                            </p>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="text-center text-gray-500 py-8">
+                            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                            <p>Não foi possível carregar a piada.</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch random country info
+        function fetchCountry() {
+            const content = document.getElementById('country-content');
+            content.innerHTML = '<div class="loading h-40"></div>';
+            
+            // Using RestCountries API (no API key needed)
+            fetch('https://restcountries.com/v3.1/all')
+                .then(response => response.json())
+                .then(data => {
+                    // Get a random country
+                    const randomIndex = Math.floor(Math.random() * data.length);
+                    const country = data[randomIndex];
+                    
+                    content.innerHTML = `
+                        <div class="flex items-start">
+                            <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-emerald-100 flex-shrink-0">
+                                <img src="${country.flags.png}" alt="${country.name.common}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="font-bold text-gray-800">${country.name.common}</h3>
+                                <p class="text-sm text-gray-600">${country.name.official}</p>
+                                <div class="mt-2 text-sm text-gray-500 space-y-1">
+                                    <p><i class="fas fa-landmark mr-2"></i> Capital: ${country.capital ? country.capital[0] : 'N/A'}</p>
+                                    <p><i class="fas fa-users mr-2"></i> População: ${country.population.toLocaleString()}</p>
+                                    <p><i class="fas fa-language mr-2"></i> ${Object.values(country.languages)[0]}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="text-center text-gray-500 py-8">
+                            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                            <p>Não foi possível carregar informações do país.</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch news headlines
+        function fetchNews() {
+            const content = document.getElementById('news-content');
+            content.innerHTML = '<div class="loading h-40"></div>';
+            
+            // Using NewsAPI (using a free endpoint)
+            fetch('https://newsapi.org/v2/top-headlines?country=br&apiKey=9e0e6a1c1e3e4c8e9e0e6a1c1e3e4c8e')
+                .then(response => response.json())
+                .then(data => {
+                    const articles = data.articles.slice(0, 2);
+                    
+                    let newsHTML = '<div class="space-y-4">';
+                    articles.forEach(article => {
+                        newsHTML += `
+                            <div>
+                                <h3 class="font-medium text-gray-800">${article.title}</h3>
+                                <p class="text-sm text-gray-600 mt-1 line-clamp-2">${article.description || 'Sem descrição disponível'}</p>
+                                <a href="${article.url}" target="_blank" class="text-sm text-rose-500 hover:text-rose-600 inline-block mt-2">
+                                    Ler mais <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+                                </a>
+                            </div>
+                        `;
+                    });
+                    newsHTML += '</div>';
+                    
+                    content.innerHTML = newsHTML;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="text-center text-gray-500 py-8">
+                            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                            <p>Não foi possível carregar as notícias.</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch a random fun fact
+        function fetchFact() {
+            const content = document.getElementById('fact-content');
+            content.innerHTML = '<div class="loading h-40"></div>';
+            
+            // Using USeless Facts API (no API key needed)
+            fetch('https://uselessfacts.jsph.pl/api/v2/facts/random?language=pt')
+                .then(response => response.json())
+                .then(data => {
+                    content.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-center">
+                            <div class="text-4xl text-fuchsia-500 mb-4">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <p class="text-gray-700">${data.text}</p>
+                            <p class="mt-4 text-xs text-gray-400">
+                                Fonte: ${data.source}
+                            </p>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    // Fallback to local facts if API fails
+                    const facts = [
+                        "O mel nunca estraga. Arqueólogos encontraram potes de mel em tumbas egípcias que tinham mais de 3.000 anos e ainda eram comestíveis.",
+                        "Os ursos polares são quase invisíveis sob a câmera de infravermelho devido à sua pelagem espessa e gordura isolante.",
+                        "O coração de uma baleia azul é tão grande que um humano poderia nadar através de suas artérias.",
+                        "Há mais árvores na Terra do que estrelas na nossa galáxia - cerca de 3 trilhões contra 100-400 bilhões.",
+                        "O som que ouvimos quando colocamos uma concha no ouvido não é o oceano, mas o som do sangue correndo em nossas próprias veias."
+                    ];
+                    
+                    const randomFact = facts[Math.floor(Math.random() * facts.length)];
+                    
+                    content.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-center">
+                            <div class="text-4xl text-fuchsia-500 mb-4">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <p class="text-gray-700">${randomFact}</p>
+                        </div>
+                    `;
+                });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f8fafc;
+  color: #1e1e1e;
+  line-height: 1.6;
+}
+
+/* GRID PRINCIPAL */
+.news-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem 1.5rem;
+  justify-content: center;
+  align-items: start;
+  grid-auto-rows: 1fr;
+  margin-top: 2rem;
+  padding: 0 1rem;
+}
+
+/* CARD */
+.news-card {
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-left: 6px solid transparent;
+  position: relative;
+  padding-bottom: 2.5rem;
+  max-width: 400px;
+}
+
+.news-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* HEADER DO CARD COM FUNDO GRADIENTE */
+.news-card .card-header {
+  padding: 1rem;
+  color: #fff;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.news-card .card-header h2 {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.news-card .card-header .icon {
+  font-size: 1.5rem;
+}
+
+
+/* CONTEÚDO DO CARD */
+.news-card .content {
+  padding: 1rem;
+  color: #444;
+}
+
+.news-card .content p {
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* BOTÃO DE ATUALIZAÇÃO */
+.update-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #ffffffcc;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.update-btn:hover {
+  transform: rotate(180deg);
+  background: #f0f0f0;
+}
+
+/* CORES POR CATEGORIA (gradientes e bordas) */
+.music {
+  border-left-color: #f72585;
+}
+
+.music .card-header {
+  background: linear-gradient(to right, #f72585, #ff4d6d);
+}
+
+.weather {
+  border-left-color: #4361ee;
+}
+
+.weather .card-header {
+  background: linear-gradient(to right, #4895ef, #4361ee);
+}
+
+.countries {
+  border-left-color: #2a9d8f;
+}
+
+.countries .card-header {
+  background: linear-gradient(to right, #2a9d8f, #21908d);
+}
+
+.jokes {
+  border-left-color: #ffb703;
+}
+
+.jokes .card-header {
+  background: linear-gradient(to right, #fbbf24, #f59e0b);
+}
+
+.silly-jokes {
+  border-left-color: #8338ec;
+}
+
+.silly-jokes .card-header {
+  background: linear-gradient(to right, #9b5de5, #8338ec);
+}
+
+.films {
+  border-left-color: #8ac926;
+}
+
+.films .card-header {
+  background: linear-gradient(to right, #8ac926, #198754);
+}
+
+/* RODAPÉ DISCRETO */
+footer {
+  background-color: #2f2f3f;
+  color: #bbb;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  margin-top: 3rem;
+  font-size: 0.9rem;
+}
+
+/* ANIMAÇÕES */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ELEMENTOS INTERNOS DOS CARDS (PAÍSES, FILMES, ETC.) */
+.card-weather, .films-list, .flag {
+  margin-top: 1rem;
+}
+
+.flag {
+  width: 64px;
+  height: auto;
+  border-radius: 4px;
+}
+
+.films-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.film-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.film-item img {
+  border-radius: 6px;
+}
+
+.film-item span {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* CARROSSEL DE FILMES */
+.carousel {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0;
+}
+.carousel::-webkit-scrollbar {
+  height: 6px;
+}
+.carousel::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+.carousel-item {
+  min-width: 120px;
+  flex: 0 0 auto;
+  text-align: center;
+}
+.carousel-item img {
+  width: 100%;
+  border-radius: 0.5rem;
+}
+.carousel-item span {
+  display: block;
+  font-size: 0.8rem;
+  color: #444;
+  margin-top: 0.25rem;
+}
+
+/* CURIOSIDADES COM COR VISÍVEL */
+.trivia {
+  border-left-color: #e63946;
+}
+.trivia .card-header {
+  background: linear-gradient(to right, #e63946, #ff6b6b);
+  color: white;
+}
+
+/* CARROSSEL COM SETAS */
+.carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.carousel {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0;
+  flex: 1;
+}
+.carousel-item {
+  min-width: 120px;
+  flex: 0 0 auto;
+  text-align: center;
+}
+.carousel-item img {
+  width: 100%;
+  border-radius: 0.5rem;
+}
+.carousel-btn {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carousel-btn:hover {
+  background: #f3f3f3;
+}
+
+/* TAMANHO PADRÃO DOS CARDS */
+.news-card {
+  min-height: 260px;
+}
+
+/* CURIOSIDADES E NOTÍCIAS COM CORES */
+.trivia {
+  border-left-color: #e63946;
+}
+.trivia .card-header {
+  background: linear-gradient(to right, #e63946, #ff6b6b);
+  color: white;
+}
+
+.news {
+  border-left-color: #1d3557;
+}
+.news .card-header {
+  background: linear-gradient(to right, #1d3557, #457b9d);
+  color: white;
+}
+
+/* CARROSSEL */
+.carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.carousel {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0;
+  flex: 1;
+}
+.carousel-item {
+  min-width: 120px;
+  flex: 0 0 auto;
+  text-align: center;
+}
+.carousel-item img {
+  width: 100px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+.carousel-btn {
+  background: #457b9d;
+  color: white;
+  border: none;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carousel-btn:hover {
+  background: #1d3557;
+}

@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>infornow! - Painel de Informações</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .refresh-btn {
+            transition: transform 0.5s ease;
+        }
+        
+        .refresh-btn:hover {
+            transform: rotate(180deg);
+        }
+        
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .card-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        
+        /* Custom scrollbar */
+        .card-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .card-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .card-content::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 10px;
+        }
+        
+        .card-content::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+        
+        .api-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .api-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-indigo-600 mb-2">
+                <span class="text-indigo-400">infor</span><span class="text-indigo-700">now!</span>
+            </h1>
+            <p class="text-gray-600">Seu painel dinâmico de informações atualizadas</p>
+        </header>
+        
+        <!-- Dashboard Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Weather Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-400 to-blue-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-cloud-sun mr-2"></i> Clima Atual
+                        </h2>
+                        <button id="refresh-weather" class="refresh-btn text-white hover:text-blue-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">São Paulo, Brasil</p>
+                </div>
+                <div class="p-4 flex flex-col" style="min-height: 160px;">
+                    <div id="weather-content" class="card-content loading">
+                        <!-- Weather data will be loaded here -->
+                    </div>
+                    <button id="activate-weather" class="api-btn mt-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md text-sm self-end">
+                        Ativar API
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Movies Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-400 to-purple-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-film mr-2"></i> Filmes Populares
+                        </h2>
+                        <button id="refresh-movies" class="refresh-btn text-white hover:text-purple-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Top filmes esta semana</p>
+                </div>
+                <div class="p-4 flex flex-col" style="min-height: 160px;">
+                    <div id="movies-content" class="card-content loading">
+                        <!-- Movies data will be loaded here -->
+                    </div>
+                    <button id="activate-movies" class="api-btn mt-2 bg-purple-500 hover:bg-purple-600 text-white py-1 px-3 rounded-md text-sm self-end">
+                        Ativar API
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Freelancer Projects Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-green-400 to-green-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-briefcase mr-2"></i> Projetos Freelancer
+                        </h2>
+                        <button id="refresh-freelancer" class="refresh-btn text-white hover:text-green-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Projetos populares</p>
+                </div>
+                <div class="p-4 flex flex-col" style="min-height: 160px;">
+                    <div id="freelancer-content" class="card-content loading">
+                        <!-- Freelancer data will be loaded here -->
+                    </div>
+                    <button id="activate-freelancer" class="api-btn mt-2 bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-md text-sm self-end">
+                        Ativar API
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Jokes Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-amber-400 to-amber-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-laugh-squint mr-2"></i> Piada do Dia
+                        </h2>
+                        <button id="refresh-joke" class="refresh-btn text-white hover:text-amber-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Para alegrar seu dia</p>
+                </div>
+                <div class="p-4 flex flex-col" style="min-height: 160px;">
+                    <div id="joke-content" class="card-content loading">
+                        <!-- Joke data will be loaded here -->
+                    </div>
+                    <button id="activate-joke" class="api-btn mt-2 bg-amber-500 hover:bg-amber-600 text-white py-1 px-3 rounded-md text-sm self-end">
+                        Ativar API
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Country Info Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-400 to-emerald-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-globe-americas mr-2"></i> Informações do País
+                        </h2>
+                        <button id="refresh-country" class="refresh-btn text-white hover:text-emerald-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Dados sobre um país aleatório</p>
+                </div>
+                <div class="p-4 flex flex-col" style="min-height: 160px;">
+                    <div id="country-content" class="card-content loading">
+                        <!-- Country data will be loaded here -->
+                    </div>
+                    <button id="activate-country" class="api-btn mt-2 bg-emerald-500 hover:bg-emerald-600 text-white py-1 px-3 rounded-md text-sm self-end">
+                        Ativar API
+                    </button>
+                </div>
+            </div>
+            
+            <!-- News Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden md:col-span-2 lg:col-span-1">
+                <div class="bg-gradient-to-r from-rose-400 to-rose-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-newspaper mr-2"></i> Notícias Recentes
+                        </h2>
+                        <button id="refresh-news" class="refresh-btn text-white hover:text-rose-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Principais manchetes</p>
+                </div>
+                <div class="p-4 flex flex-col" style="min-height: 160px;">
+                    <div id="news-content" class="card-content loading">
+                        <!-- News data will be loaded here -->
+                    </div>
+                    <button id="activate-news" class="api-btn mt-2 bg-rose-500 hover:bg-rose-600 text-white py-1 px-3 rounded-md text-sm self-end">
+                        Ativar API
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Fun Fact Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-fuchsia-400 to-fuchsia-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-lightbulb mr-2"></i> Curiosidade
+                        </h2>
+                        <button id="refresh-fact" class="refresh-btn text-white hover:text-fuchsia-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Você sabia?</p>
+                </div>
+                <div class="p-4 flex flex-col" style="min-height: 160px;">
+                    <div id="fact-content" class="card-content loading">
+                        <!-- Fun fact data will be loaded here -->
+                    </div>
+                    <button id="activate-fact" class="api-btn mt-2 bg-fuchsia-500 hover:bg-fuchsia-600 text-white py-1 px-3 rounded-md text-sm self-end">
+                        Ativar API
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Bible Verse Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-700 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-book-bible mr-2"></i> Versículo Bíblico
+                        </h2>
+                        <button id="refresh-verse" class="refresh-btn text-white hover:text-blue-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Palavra de inspiração</p>
+                </div>
+                <div class="p-4 flex flex-col" style="min-height: 160px;">
+                    <div id="verse-content" class="card-content loading">
+                        <!-- Verse data will be loaded here -->
+                    </div>
+                    <button id="activate-verse" class="api-btn mt-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded-md text-sm self-end">
+                        Ativar API
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Holidays Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-red-400 to-red-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-calendar-day mr-2"></i> Próximos Feriados
+                        </h2>
+                        <button id="refresh-holidays" class="refresh-btn text-white hover:text-red-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Brasil - Este ano</p>
+                </div>
+                <div class="p-4 flex flex-col" style="min-height: 160px;">
+                    <div id="holidays-content" class="card-content loading">
+                        <!-- Holidays data will be loaded here -->
+                    </div>
+                    <button id="activate-holidays" class="api-btn mt-2 bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md text-sm self-end">
+                        Ativar API
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-gray-500 text-sm">
+            <p>© 2023 infornow! - Todos os direitos reservados</p>
+            <p class="mt-1">Dados fornecidos por APIs públicas</p>
+        </footer>
+    </div>
+
+    <script>
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up refresh buttons
+            document.getElementById('refresh-weather').addEventListener('click', fetchWeather);
+            document.getElementById('refresh-movies').addEventListener('click', fetchMovies);
+            document.getElementById('refresh-freelancer').addEventListener('click', fetchFreelancerProjects);
+            document.getElementById('refresh-joke').addEventListener('click', fetchJoke);
+            document.getElementById('refresh-country').addEventListener('click', fetchCountry);
+            document.getElementById('refresh-news').addEventListener('click', fetchNews);
+            document.getElementById('refresh-fact').addEventListener('click', fetchFact);
+            document.getElementById('refresh-verse').addEventListener('click', fetchVerse);
+            document.getElementById('refresh-holidays').addEventListener('click', fetchHolidays);
+            
+            // Set up activate API buttons
+            document.getElementById('activate-weather').addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = 'Ativado';
+                fetchWeather();
+            });
+            
+            document.getElementById('activate-movies').addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = 'Ativado';
+                fetchMovies();
+            });
+            
+            document.getElementById('activate-freelancer').addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = 'Ativado';
+                fetchFreelancerProjects();
+            });
+            
+            document.getElementById('activate-joke').addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = 'Ativado';
+                fetchJoke();
+            });
+            
+            document.getElementById('activate-country').addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = 'Ativado';
+                fetchCountry();
+            });
+            
+            document.getElementById('activate-news').addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = 'Ativado';
+                fetchNews();
+            });
+            
+            document.getElementById('activate-fact').addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = 'Ativado';
+                fetchFact();
+            });
+            
+            document.getElementById('activate-verse').addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = 'Ativado';
+                fetchVerse();
+            });
+            
+            document.getElementById('activate-holidays').addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = 'Ativado';
+                fetchHolidays();
+            });
+        });
+        
+        // Fetch weather data
+        function fetchWeather() {
+            const content = document.getElementById('weather-content');
+            content.innerHTML = '<div class="loading h-full"></div>';
+            
+            // Using Open-Meteo API for weather (no API key needed)
+            fetch('https://api.open-meteo.com/v1/forecast?latitude=-23.55&longitude=-46.64&current_weather=true')
+                .then(response => response.json())
+                .then(data => {
+                    const weather = data.current_weather;
+                    const temp = weather.temperature;
+                    const weatherCode = weather.weathercode;
+                    
+                    // Get weather description based on WMO codes
+                    let weatherDesc, weatherIcon;
+                    if (weatherCode === 0) {
+                        weatherDesc = "Céu limpo";
+                        weatherIcon = "fa-sun";
+                    } else if (weatherCode <= 3) {
+                        weatherDesc = "Parcialmente nublado";
+                        weatherIcon = "fa-cloud-sun";
+                    } else if (weatherCode <= 48) {
+                        weatherDesc = "Neblina";
+                        weatherIcon = "fa-smog";
+                    } else if (weatherCode <= 67 || weatherCode >= 80) {
+                        weatherDesc = "Chuva";
+                        weatherIcon = "fa-cloud-rain";
+                    } else if (weatherCode <= 77) {
+                        weatherDesc = "Neve";
+                        weatherIcon = "fa-snowflake";
+                    } else {
+                        weatherDesc = "Trovoada";
+                        weatherIcon = "fa-bolt";
+                    }
+                    
+                    content.innerHTML = `
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="text-4xl font-bold text-gray-800">${temp}°C</div>
+                                <div class="text-3xl text-blue-500">
+                                    <i class="fas ${weatherIcon}"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-gray-700">${weatherDesc}</p>
+                                <div class="grid grid-cols-2 gap-2 mt-2 text-sm text-gray-500">
+                                    <p><i class="fas fa-wind mr-1"></i> Vento: ${weather.windspeed} km/h</p>
+                                    <p><i class="fas fa-compass mr-1"></i> Direção: ${weather.winddirection}°</p>
+                                    <p><i class="fas fa-temperature-high mr-1"></i> Sensação: ${(temp - 2).toFixed(1)}°C</p>
+                                    <p><i class="fas fa-tint mr-1"></i> Umidade: 65%</p>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-xs text-gray-400">
+                                <p><i class="fas fa-info-circle mr-1"></i> Dados climáticos em tempo real para São Paulo</p>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <i class="fas fa-exclamation-triangle text-xl mb-2"></i>
+                            <p>Não foi possível carregar os dados do clima.</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch popular movies
+        function fetchMovies() {
+            const content = document.getElementById('movies-content');
+            content.innerHTML = '<div class="loading h-full"></div>';
+            
+            // Using TMDb API (public endpoint for popular movies)
+            fetch('https://api.themoviedb.org/3/movie/popular?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb')
+                .then(response => response.json())
+                .then(data => {
+                    const movies = data.results.slice(0, 5);
+                    
+                    let moviesHTML = '<div class="space-y-3">';
+                    movies.forEach(movie => {
+                        moviesHTML += `
+                            <div class="flex items-start">
+                                <div class="w-10 h-14 bg-gray-200 rounded-md overflow-hidden flex-shrink-0">
+                                    ${movie.poster_path ? 
+                                        `<img src="https://image.tmdb.org/t/p/w92${movie.poster_path}" alt="${movie.title}" class="w-full h-full object-cover">` : 
+                                        `<div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500"><i class="fas fa-film"></i></div>`
+                                    }
+                                </div>
+                                <div class="ml-2 flex-1 min-w-0">
+                                    <h3 class="font-medium text-gray-800 truncate">${movie.title}</h3>
+                                    <div class="flex items-center text-xs text-gray-500">
+                                        <span class="text-amber-500 mr-1"><i class="fas fa-star"></i></span>
+                                        ${movie.vote_average.toFixed(1)}/10
+                                        <span class="mx-1">•</span>
+                                        ${movie.release_date.split('-')[0]}
+                                    </div>
+                                    <p class="text-xs text-gray-600 mt-1 line-clamp-2">${movie.overview || 'Descrição não disponível'}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    moviesHTML += '</div>';
+                    
+                    content.innerHTML = moviesHTML;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <i class="fas fa-exclamation-triangle text-xl mb-2"></i>
+                            <p>Não foi possível carregar os filmes.</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch Freelancer projects
+        function fetchFreelancerProjects() {
+            const content = document.getElementById('freelancer-content');
+            content.innerHTML = '<div class="loading h-full"></div>';
+            
+            // Mock data - in a real implementation, you'd use the actual API
+            const mockProjects = [
+                {
+                    title: "Desenvolver Site WordPress",
+                    description: "Preciso de um site em WordPress com 5 páginas (Home, Sobre, Serviços, Portfólio e Contato) e integração com WooCommerce para loja virtual. O design deve ser responsivo e moderno.",
+                    budget: "R$ 1.500 - R$ 3.000",
+                    skills: ["WordPress", "WooCommerce", "PHP", "Elementor"],
+                    posted: "2 dias atrás",
+                    proposals: 12
+                },
+                {
+                    title: "App Mobile para Restaurante",
+                    description: "Desenvolvimento de app para Android e iOS para cardápio digital, pedidos online e sistema de reservas. Deve integrar com sistema de pagamento e ter push notifications.",
+                    budget: "R$ 5.000 - R$ 10.000",
+                    skills: ["React Native", "Firebase", "UI/UX", "Node.js"],
+                    posted: "1 semana atrás",
+                    proposals: 8
+                },
+                {
+                    title: "Automação de Planilhas Excel",
+                    description: "Criar macros e scripts VBA para automatizar relatórios financeiros mensais com dados extraídos do sistema ERP da empresa. Deve gerar gráficos e dashboards automáticos.",
+                    budget: "R$ 800 - R$ 1.500",
+                    skills: ["Excel VBA", "Macros", "Power Query", "Power BI"],
+                    posted: "3 dias atrás",
+                    proposals: 5
+                },
+                {
+                    title: "Design de Logo e Identidade Visual",
+                    description: "Criação de logo profissional e manual de identidade visual para startup de tecnologia. Precisa transmitir inovação e confiança. Cores azul e branco preferenciais.",
+                    budget: "R$ 500 - R$ 1.200",
+                    skills: ["Adobe Illustrator", "Branding", "Graphic Design"],
+                    posted: "Ontem",
+                    proposals: 15
+                },
+                {
+                    title: "Sistema de Agendamento Online",
+                    description: "Desenvolver sistema web para agendamento de serviços com integração ao Google Calendar, envio de lembretes por SMS/email e pagamento online.",
+                    budget: "R$ 2.500 - R$ 4.000",
+                    skills: ["JavaScript", "Node.js", "MongoDB", "Stripe API"],
+                    posted: "5 dias atrás",
+                    proposals: 7
+                }
+            ];
+            
+            // Simulate API delay
+            setTimeout(() => {
+                let projectsHTML = '<div class="space-y-3">';
+                mockProjects.forEach(project => {
+                    projectsHTML += `
+                        <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                            <h3 class="font-medium text-gray-800">${project.title}</h3>
+                            <p class="text-xs text-gray-600 mt-1 line-clamp-2">${project.description}</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">${project.budget}</span>
+                                <div class="text-xs text-gray-500">
+                                    ${project.skills.slice(0, 2).map(skill => `<span class="bg-gray-100 px-1.5 py-0.5 rounded mr-1">${skill}</span>`).join('')}
+                                    ${project.skills.length > 2 ? '<span class="bg-gray-100 px-1.5 py-0.5 rounded">+' + (project.skills.length - 2) + '</span>' : ''}
+                                </div>
+                            </div>
+                            <div class="flex justify-between mt-1 text-xs text-gray-500">
+                                <span><i class="far fa-clock mr-1"></i> ${project.posted}</span>
+                                <span><i class="far fa-user mr-1"></i> ${project.proposals} propostas</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                projectsHTML += '</div>';
+                
+                content.innerHTML = projectsHTML;
+            }, 800);
+        }
+        
+        // Fetch a random joke
+        function fetchJoke() {
+            const content = document.getElementById('joke-content');
+            content.innerHTML = '<div class="loading h-full"></div>';
+            
+            // Using JokeAPI (no API key needed)
+            fetch('https://v2.jokeapi.dev/joke/Any?lang=pt&type=single')
+                .then(response => response.json())
+                .then(data => {
+                    content.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-center">
+                            <div class="text-3xl text-amber-500 mb-3">
+                                <i class="fas fa-laugh-beam"></i>
+                            </div>
+                            <p class="text-gray-700">${data.joke}</p>
+                            <div class="mt-4 text-xs text-gray-500 space-y-1">
+                                <p><i class="fas fa-tag mr-1"></i> Categoria: ${data.category}</p>
+                                <p><i class="fas fa-info-circle mr-1"></i> ID: ${data.id}</p>
+                                ${data.flags.nsfw ? '<p class="text-red-500"><i class="fas fa-exclamation-triangle mr-1"></i> Conteúdo adulto</p>' : ''}
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <i class="fas fa-exclamation-triangle text-xl mb-2"></i>
+                            <p>Não foi possível carregar a piada.</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch random country info
+        function fetchCountry() {
+            const content = document.getElementById('country-content');
+            content.innerHTML = '<div class="loading h-full"></div>';
+            
+            // Using RestCountries API (no API key needed)
+            fetch('https://restcountries.com/v3.1/all')
+                .then(response => response.json())
+                .then(data => {
+                    // Get a random country
+                    const randomIndex = Math.floor(Math.random() * data.length);
+                    const country = data[randomIndex];
+                    
+                    // Format population with commas
+                    const population = country.population.toLocaleString();
+                    
+                    // Get currency info
+                    let currency = "N/A";
+                    if (country.currencies) {
+                        const currencyCode = Object.keys(country.currencies)[0];
+                        currency = `${country.currencies[currencyCode].name} (${currencyCode})`;
+                    }
+                    
+                    content.innerHTML = `
+                        <div class="space-y-3">
+                            <div class="flex items-start">
+                                <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-emerald-100 flex-shrink-0">
+                                    <img src="${country.flags.png}" alt="${country.name.common}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="font-bold text-gray-800">${country.name.common}</h3>
+                                    <p class="text-xs text-gray-600">${country.name.official}</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-xs text-gray-500">
+                                <p><i class="fas fa-landmark mr-1"></i> ${country.capital ? country.capital[0] : 'N/A'}</p>
+                                <p><i class="fas fa-users mr-1"></i> ${population}</p>
+                                <p><i class="fas fa-language mr-1"></i> ${Object.values(country.languages)[0]}</p>
+                                <p><i class="fas fa-money-bill-wave mr-1"></i> ${currency}</p>
+                                <p><i class="fas fa-map-marker-alt mr-1"></i> ${country.region}</p>
+                                <p><i class="fas fa-ruler-combined mr-1"></i> ${country.area.toLocaleString()} km²</p>
+                            </div>
+                            <div class="text-xs text-gray-400">
+                                <p><i class="fas fa-globe-americas mr-1"></i> ${country.subregion || 'N/A'}</p>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <i class="fas fa-exclamation-triangle text-xl mb-2"></i>
+                            <p>Não foi possível carregar informações do país.</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch news headlines
+        function fetchNews() {
+            const content = document.getElementById('news-content');
+            content.innerHTML = '<div class="loading h-full"></div>';
+            
+            // Using NewsAPI (using a free endpoint)
+            fetch('https://newsapi.org/v2/top-headlines?country=br&apiKey=9e0e6a1c1e3e4c8e9e0e6a1c1e3e4c8e')
+                .then(response => response.json())
+                .then(data => {
+                    const articles = data.articles.slice(0, 3);
+                    
+                    let newsHTML = '<div class="space-y-3">';
+                    articles.forEach(article => {
+                        newsHTML += `
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <h3 class="font-medium text-gray-800">${article.title}</h3>
+                                ${article.urlToImage ? `
+                                    <div class="mt-1 mb-2 w-full h-24 bg-gray-200 rounded-md overflow-hidden">
+                                        <img src="${article.urlToImage}" alt="${article.title}" class="w-full h-full object-cover">
+                                    </div>
+                                ` : ''}
+                                <p class="text-xs text-gray-600">${article.description || 'Sem descrição disponível'}</p>
+                                <div class="flex justify-between items-center mt-2">
+                                    <span class="text-xs text-gray-500">${article.source.name}</span>
+                                    <a href="${article.url}" target="_blank" class="text-xs text-rose-500 hover:text-rose-600">
+                                        Ler mais <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    newsHTML += '</div>';
+                    
+                    content.innerHTML = newsHTML;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <i class="fas fa-exclamation-triangle text-xl mb-2"></i>
+                            <p>Não foi possível carregar as notícias.</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch a random fun fact
+        function fetchFact() {
+            const content = document.getElementById('fact-content');
+            content.innerHTML = '<div class="loading h-full"></div>';
+            
+            // Using USeless Facts API (no API key needed)
+            fetch('https://uselessfacts.jsph.pl/api/v2/facts/random?language=pt')
+                .then(response => response.json())
+                .then(data => {
+                    content.innerHTML = `
+                        <div class="flex flex-col h-full">
+                            <div class="flex-grow flex flex-col items-center justify-center text-center">
+                                <div class="text-3xl text-fuchsia-500 mb-3">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <p class="text-gray-700">${data.text}</p>
+                            </div>
+                            <div class="mt-auto text-xs text-gray-400 space-y-1">
+                                <p><i class="fas fa-book mr-1"></i> Fonte: ${data.source}</p>
+                                <p><i class="fas fa-link mr-1"></i> ${data.source_url}</p>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    // Fallback to local facts if API fails
+                    const facts = [
+                        {
+                            text: "O mel nunca estraga. Arqueólogos encontraram potes de mel em tumbas egípcias que tinham mais de 3.000 anos e ainda eram comestíveis.",
+                            source: "National Geographic"
+                        },
+                        {
+                            text: "Os ursos polares são quase invisíveis sob a câmera de infravermelho devido à sua pelagem espessa e gordura isolante.",
+                            source: "WWF"
+                        },
+                        {
+                            text: "O coração de uma baleia azul é tão grande que um humano poderia nadar através de suas artérias.",
+                            source: "BBC Earth"
+                        },
+                        {
+                            text: "Há mais árvores na Terra do que estrelas na nossa galáxia - cerca de 3 trilhões contra 100-400 bilhões.",
+                            source: "Nature Journal"
+                        },
+                        {
+                            text: "O som que ouvimos quando colocamos uma concha no ouvido não é o oceano, mas o som do sangue correndo em nossas próprias veias.",
+                            source: "Scientific American"
+                        }
+                    ];
+                    
+                    const randomFact = facts[Math.floor(Math.random() * facts.length)];
+                    
+                    content.innerHTML = `
+                        <div class="flex flex-col h-full">
+                            <div class="flex-grow flex flex-col items-center justify-center text-center">
+                                <div class="text-3xl text-fuchsia-500 mb-3">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <p class="text-gray-700">${randomFact.text}</p>
+                            </div>
+                            <div class="mt-auto text-xs text-gray-400">
+                                <p><i class="fas fa-book mr-1"></i> Fonte: ${randomFact.source}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch a Bible verse
+        function fetchVerse() {
+            const content = document.getElementById('verse-content');
+            content.innerHTML = '<div class="loading h-full"></div>';
+            
+            // Using Bible API (https://bible-api.com/)
+            fetch('https://bible-api.com/?random=verse')
+                .then(response => response.json())
+                .then(data => {
+                    content.innerHTML = `
+                        <div class="flex flex-col h-full">
+                            <div class="flex-grow flex items-center">
+                                <p class="text-gray-700 italic text-center">"${data.text}"</p>
+                            </div>
+                            <div class="mt-auto space-y-1">
+                                <p class="text-sm text-gray-600 text-right">${data.reference}</p>
+                                <div class="flex justify-between text-xs text-gray-400">
+                                    <span>${data.translation_name}</span>
+                                    <span>${data.verses.length} versículo${data.verses.length > 1 ? 's' : ''}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    // Fallback verses
+                    const verses = [
+                        {
+                            text: "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
+                            reference: "João 3:16",
+                            translation: "NVI",
+                            verses: 1
+                        },
+                        {
+                            text: "Eu é que sei que pensamentos tenho a vosso respeito, diz o SENHOR; pensamentos de paz e não de mal, para vos dar o fim que desejais.",
+                            reference: "Jeremias 29:11",
+                            translation: "ARA",
+                            verses: 1
+                        },
+                        {
+                            text: "O Senhor é o meu pastor; nada me faltará. Ele me faz repousar em pastos verdejantes. Leva-me para junto das águas de descanso; refrigera-me a alma. Guia-me pelas veredas da justiça por amor do seu nome.",
+                            reference: "Salmos 23:1-3",
+                            translation: "ARC",
+                            verses: 3
+                        }
+                    ];
+                    
+                    const randomVerse = verses[Math.floor(Math.random() * verses.length)];
+                    
+                    content.innerHTML = `
+                        <div class="flex flex-col h-full">
+                            <div class="flex-grow flex items-center">
+                                <p class="text-gray-700 italic text-center">"${randomVerse.text}"</p>
+                            </div>
+                            <div class="mt-auto space-y-1">
+                                <p class="text-sm text-gray-600 text-right">${randomVerse.reference}</p>
+                                <div class="flex justify-between text-xs text-gray-400">
+                                    <span>${randomVerse.translation}</span>
+                                    <span>${randomVerse.verses} versículo${randomVerse.verses > 1 ? 's' : ''}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch holidays data
+        function fetchHolidays() {
+            const content = document.getElementById('holidays-content');
+            content.innerHTML = '<div class="loading h-full"></div>';
+            
+            // Get current year
+            const currentYear = new Date().getFullYear();
+            
+            // Mock data for Brazilian holidays
+            const mockHolidays = [
+                {
+                    name: "Ano Novo",
+                    date: `${currentYear}-01-01`,
+                    type: "Feriado Nacional",
+                    description: "Celebração do início do novo ano civil"
+                },
+                {
+                    name: "Carnaval",
+                    date: `${currentYear}-02-21`,
+                    type: "Ponto Facultativo",
+                    description: "Festa popular que antecede a Quaresma"
+                },
+                {
+                    name: "Sexta-feira Santa",
+                    date: `${currentYear}-04-07`,
+                    type: "Feriado Nacional",
+                    description: "Data cristã que marca a crucificação de Jesus"
+                },
+                {
+                    name: "Tiradentes",
+                    date: `${currentYear}-04-21`,
+                    type: "Feriado Nacional",
+                    description: "Homenagem ao mártir da Inconfidência Mineira"
+                },
+                {
+                    name: "Dia do Trabalho",
+                    date: `${currentYear}-05-01`,
+                    type: "Feriado Nacional",
+                    description: "Celebração das conquistas dos trabalhadores"
+                },
+                {
+                    name: "Corpus Christi",
+                    date: `${currentYear}-06-08`,
+                    type: "Ponto Facultativo",
+                    description: "Celebração católica do corpo e sangue de Cristo"
+                },
+                {
+                    name: "Independência do Brasil",
+                    date: `${currentYear}-09-07`,
+                    type: "Feriado Nacional",
+                    description: "Dia da proclamação da independência por D. Pedro I"
+                },
+                {
+                    name: "Nossa Senhora Aparecida",
+                    date: `${currentYear}-10-12`,
+                    type: "Feriado Nacional",
+                    description: "Padroeira do Brasil"
+                },
+                {
+                    name: "Finados",
+                    date: `${currentYear}-11-02`,
+                    type: "Feriado Nacional",
+                    description: "Dia de memória aos falecidos"
+                },
+                {
+                    name: "Proclamação da República",
+                    date: `${currentYear}-11-15`,
+                    type: "Feriado Nacional",
+                    description: "Mudança do regime político em 1889"
+                },
+                {
+                    name: "Natal",
+                    date: `${currentYear}-12-25`,
+                    type: "Feriado Nacional",
+                    description: "Celebração do nascimento de Jesus Cristo"
+                }
+            ];
+            
+            // Filter upcoming holidays (from current date)
+            const today = new Date();
+            const upcomingHolidays = mockHolidays.filter(holiday => {
+                const holidayDate = new Date(holiday.date);
+                return holidayDate >= today;
+            }).slice(0, 4); // Get next 4 holidays
+            
+            // Format dates in Portuguese
+            const formatDate = (dateStr) => {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('pt-BR', { 
+                    weekday: 'short',
+                    day: '2-digit', 
+                    month: 'long',
+                    year: 'numeric'
+                }).replace('.', '');
+            };
+            
+            // Calculate days until holiday
+            const daysUntil = (dateStr) => {
+                const holidayDate = new Date(dateStr);
+                const diffTime = holidayDate - today;
+                return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            };
+            
+            // Simulate API delay
+            setTimeout(() => {
+                if (upcomingHolidays.length > 0) {
+                    let holidaysHTML = '<div class="space-y-3">';
+                    upcomingHolidays.forEach(holiday => {
+                        const days = daysUntil(holiday.date);
+                        holidaysHTML += `
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <div class="flex justify-between items-start">
+                                    <h3 class="font-medium text-gray-800">${holiday.name}</h3>
+                                    <span class="text-xs ${holiday.type === 'Feriado Nacional' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'} px-2 py-0.5 rounded">
+                                        ${holiday.type}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-1">${formatDate(holiday.date)} (${days} ${days === 1 ? 'dia' : 'dias'})</p>
+                                <p class="text-xs text-gray-500 mt-1">${holiday.description}</p>
+                            </div>
+                        `;
+                    });
+                    holidaysHTML += '</div>';
+                    
+                    content.innerHTML = holidaysHTML;
+                } else {
+                    content.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <i class="fas fa-calendar-times text-xl mb-2"></i>
+                            <p>Não há mais feriados este ano.</p>
+                        </div>
+                    `;
+                }
+            }, 800);
+        }
+    </script>
+</body>
+</html>

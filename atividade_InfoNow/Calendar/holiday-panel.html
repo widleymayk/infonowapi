@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Feriados</title>
+    <link rel="stylesheet" href="holiday-panel.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="holiday-panel">
+            <div class="panel-header">
+                <h2><i class="fas fa-calendar-alt"></i> Feriados Mundiais</h2>
+                <div class="controls">
+                    <select id="country-select" class="custom-select">
+                        <option value="">Selecione um país</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                    <select id="year-select" class="custom-select">
+                        <option value="">Selecione um ano</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                    <button id="search-btn" class="btn"><i class="fas fa-search"></i> Buscar</button>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Carregando feriados...</p>
+                </div>
+                <div id="holiday-list" class="holiday-list">
+                    <!-- Holiday items will be inserted here -->
+                </div>
+                <div id="error-message" class="error-message">
+                    <!-- Error messages will be inserted here -->
+                </div>
+            </div>
+            <div class="panel-footer">
+                <p>Dados fornecidos por AbstractAPI Holidays</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="holiday-panel.js"></script>
+</body>
+</html>
