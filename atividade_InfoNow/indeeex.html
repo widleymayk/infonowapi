@@ -307,6 +307,75 @@
                     </button>
                 </div>
             </div>
+            
+            <!-- Dropbox Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-sky-400 to-sky-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-box-open mr-2"></i> Dropbox
+                        </h2>
+                        <button id="refresh-dropbox" class="refresh-btn text-white hover:text-sky-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Seus arquivos na nuvem</p>
+                </div>
+                <div class="p-4 flex flex-col" style="min-height: 160px;">
+                    <div id="dropbox-content" class="card-content loading">
+                        <!-- Dropbox data will be loaded here -->
+                    </div>
+                    <button id="activate-dropbox" class="api-btn mt-2 bg-sky-500 hover:bg-sky-600 text-white py-1 px-3 rounded-md text-sm self-end">
+                        Ativar API
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Art Institute Chicago Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-violet-400 to-violet-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-palette mr-2"></i> Art Institute Chicago
+                        </h2>
+                        <button id="refresh-art" class="refresh-btn text-white hover:text-violet-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Obras de arte em destaque</p>
+                </div>
+                <div class="p-4 flex flex-col" style="min-height: 160px;">
+                    <div id="art-content" class="card-content loading">
+                        <!-- Art data will be loaded here -->
+                    </div>
+                    <button id="activate-art" class="api-btn mt-2 bg-violet-500 hover:bg-violet-600 text-white py-1 px-3 rounded-md text-sm self-end">
+                        Ativar API
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Auth0 Card -->
+            <div class="card bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-orange-400 to-orange-600 p-4 text-white">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">
+                            <i class="fas fa-user-shield mr-2"></i> Auth0
+                        </h2>
+                        <button id="refresh-auth0" class="refresh-btn text-white hover:text-orange-200">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm opacity-90">Gerenciamento de autenticação</p>
+                </div>
+                <div class="p-4 flex flex-col" style="min-height: 160px;">
+                    <div id="auth0-content" class="card-content loading">
+                        <!-- Auth0 data will be loaded here -->
+                    </div>
+                    <button id="activate-auth0" class="api-btn mt-2 bg-orange-500 hover:bg-orange-600 text-white py-1 px-3 rounded-md text-sm self-end">
+                        Ativar API
+                    </button>
+                </div>
+            </div>
         </div>
         
         <!-- Footer -->
@@ -329,6 +398,9 @@
             document.getElementById('refresh-fact').addEventListener('click', fetchFact);
             document.getElementById('refresh-verse').addEventListener('click', fetchVerse);
             document.getElementById('refresh-holidays').addEventListener('click', fetchHolidays);
+            document.getElementById('refresh-dropbox').addEventListener('click', fetchDropbox);
+            document.getElementById('refresh-art').addEventListener('click', fetchArt);
+            document.getElementById('refresh-auth0').addEventListener('click', fetchAuth0);
             
             // Set up activate API buttons
             document.getElementById('activate-weather').addEventListener('click', function() {
@@ -383,6 +455,24 @@
                 this.disabled = true;
                 this.textContent = 'Ativado';
                 fetchHolidays();
+            });
+            
+            document.getElementById('activate-dropbox').addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = 'Ativado';
+                fetchDropbox();
+            });
+            
+            document.getElementById('activate-art').addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = 'Ativado';
+                fetchArt();
+            });
+            
+            document.getElementById('activate-auth0').addEventListener('click', function() {
+                this.disabled = true;
+                this.textContent = 'Ativado';
+                fetchAuth0();
             });
         });
         
@@ -981,6 +1071,192 @@
                         </div>
                     `;
                 }
+            }, 800);
+        }
+        
+        // Fetch Dropbox data
+        function fetchDropbox() {
+            const content = document.getElementById('dropbox-content');
+            content.innerHTML = '<div class="loading h-full"></div>';
+            
+            // Mock data - in a real implementation, you'd use the actual Dropbox API
+            const mockFiles = [
+                {
+                    name: "Relatório Financeiro Q3.pdf",
+                    type: "pdf",
+                    size: "2.4 MB",
+                    modified: "3 dias atrás",
+                    shared: true
+                },
+                {
+                    name: "Apresentação Cliente.pptx",
+                    type: "ppt",
+                    size: "5.1 MB",
+                    modified: "1 semana atrás",
+                    shared: false
+                },
+                {
+                    name: "Contrato Assinado.docx",
+                    type: "doc",
+                    size: "1.2 MB",
+                    modified: "2 dias atrás",
+                    shared: true
+                },
+                {
+                    name: "Fotos Evento",
+                    type: "folder",
+                    size: "156 MB",
+                    modified: "5 dias atrás",
+                    shared: true
+                },
+                {
+                    name: "Backup Banco de Dados.sql",
+                    type: "sql",
+                    size: "45.7 MB",
+                    modified: "1 dia atrás",
+                    shared: false
+                }
+            ];
+            
+            // Simulate API delay
+            setTimeout(() => {
+                let filesHTML = '<div class="space-y-3">';
+                mockFiles.forEach(file => {
+                    // Get icon based on file type
+                    let icon;
+                    if (file.type === 'pdf') icon = 'fa-file-pdf';
+                    else if (file.type === 'doc') icon = 'fa-file-word';
+                    else if (file.type === 'ppt') icon = 'fa-file-powerpoint';
+                    else if (file.type === 'sql') icon = 'fa-database';
+                    else icon = 'fa-folder';
+                    
+                    filesHTML += `
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 flex items-center justify-center text-sky-500 mr-2">
+                                <i class="fas ${icon}"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-gray-800 truncate">${file.name}</p>
+                                <div class="flex justify-between text-xs text-gray-500">
+                                    <span>${file.size}</span>
+                                    <span>${file.modified}</span>
+                                </div>
+                            </div>
+                            ${file.shared ? 
+                                '<div class="ml-2 text-sky-500"><i class="fas fa-share-alt"></i></div>' : 
+                                '<div class="ml-2 text-gray-400"><i class="fas fa-lock"></i></div>'
+                            }
+                        </div>
+                    `;
+                });
+                filesHTML += '</div>';
+                
+                content.innerHTML = filesHTML;
+            }, 800);
+        }
+        
+        // Fetch Art Institute Chicago data
+        function fetchArt() {
+            const content = document.getElementById('art-content');
+            content.innerHTML = '<div class="loading h-full"></div>';
+            
+            // Using Art Institute Chicago API (public endpoint)
+            fetch('https://api.artic.edu/api/v1/artworks?limit=3&fields=id,title,artist_title,date_display,image_id')
+                .then(response => response.json())
+                .then(data => {
+                    const artworks = data.data;
+                    
+                    let artHTML = '<div class="space-y-3">';
+                    artworks.forEach(art => {
+                        const imageUrl = art.image_id ? 
+                            `https://www.artic.edu/iiif/2/${art.image_id}/full/200,/0/default.jpg` : 
+                            null;
+                        
+                        artHTML += `
+                            <div class="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                                <div class="flex items-start">
+                                    ${imageUrl ? `
+                                        <div class="w-12 h-12 bg-gray-200 rounded-md overflow-hidden flex-shrink-0">
+                                            <img src="${imageUrl}" alt="${art.title}" class="w-full h-full object-cover">
+                                        </div>
+                                    ` : `
+                                        <div class="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center text-gray-400">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                    `}
+                                    <div class="ml-2 flex-1 min-w-0">
+                                        <h3 class="text-sm font-medium text-gray-800 truncate">${art.title || 'Sem título'}</h3>
+                                        <p class="text-xs text-gray-600">${art.artist_title || 'Artista desconhecido'}</p>
+                                        <p class="text-xs text-gray-500 mt-1">${art.date_display || 'Data desconhecida'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    artHTML += '</div>';
+                    
+                    content.innerHTML = artHTML;
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div class="text-center text-gray-500 py-4">
+                            <i class="fas fa-exclamation-triangle text-xl mb-2"></i>
+                            <p>Não foi possível carregar as obras de arte.</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Fetch Auth0 data
+        function fetchAuth0() {
+            const content = document.getElementById('auth0-content');
+            content.innerHTML = '<div class="loading h-full"></div>';
+            
+            // Mock data - in a real implementation, you'd use the actual Auth0 API
+            const mockAuthData = {
+                users: 42,
+                lastLogin: "2 horas atrás",
+                activeSessions: 5,
+                securityEvents: [
+                    { type: "Login", count: 12 },
+                    { type: "Password Reset", count: 3 },
+                    { type: "Failed Login", count: 2 }
+                ]
+            };
+            
+            // Simulate API delay
+            setTimeout(() => {
+                content.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-orange-50 p-2 rounded-md text-center">
+                                <p class="text-xs text-orange-600">Usuários</p>
+                                <p class="text-xl font-bold text-orange-700">${mockAuthData.users}</p>
+                            </div>
+                            <div class="bg-orange-50 p-2 rounded-md text-center">
+                                <p class="text-xs text-orange-600">Sessões Ativas</p>
+                                <p class="text-xl font-bold text-orange-700">${mockAuthData.activeSessions}</p>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-600">
+                            <p><i class="fas fa-clock mr-1"></i> Último login: ${mockAuthData.lastLogin}</p>
+                        </div>
+                        <div class="mt-2">
+                            <h4 class="text-xs font-medium text-gray-700 mb-1">Eventos de Segurança</h4>
+                            <ul class="space-y-1 text-xs text-gray-600">
+                                ${mockAuthData.securityEvents.map(event => `
+                                    <li class="flex justify-between">
+                                        <span>${event.type}</span>
+                                        <span class="font-medium">${event.count}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-400">
+                            <p><i class="fas fa-shield-alt mr-1"></i> Sistema de autenticação seguro</p>
+                        </div>
+                    </div>
+                `;
             }, 800);
         }
     </script>
